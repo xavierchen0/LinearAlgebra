@@ -2,10 +2,9 @@ import time
 import functools
 import numpy as np
 
-# create a decorator to time functions
 def timer(func):
     """
-    Create a decorator to time functions
+    A decorator to time functions.
     """
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
@@ -16,6 +15,38 @@ def timer(func):
         return value
     return wrapper
 
+def check_input(func):
+    '''
+    A decorator to check if the input matrix is valid.
+    '''
+    @functools.wraps(func)
+    def wrapper_check_input(*args, **kwargs):
+        matrix = args[0]
+        matrix1 = kwargs.get('matrix')
+        def check(mat):
+            if not isinstance(mat, np.ndarray):
+                raise TypeError("Matrix must be a numpy array")
+            else:
+                # check if data type of the numpy arrray is float64 or int64
+                if mat.dtype != np.float64:
+                    raise TypeError("Matrix must be of type float64")
+                else:
+                    # check if data is a 2darray
+                    if mat.ndim <= 2:
+                        raise ValueError("Matrix must be a 1darray or 2darray")
+                    else:
+                        # check if data is not an empty numpy array
+                        if mat.size == 0:
+                            raise ValueError("Matrix must not be an empty numpy array")
+
+        if matrix1 is not None:
+            matrix = matrix1
+            check(matrix)
+        else:
+            check(matrix)
+
+    return wrapper_check_input
+
 class LinearAlgebra():
     """
     Initialise the LinearAlgebra class to perform linear algebra operations
@@ -25,6 +56,10 @@ class LinearAlgebra():
 
     def __repr__(self) -> str:
         pass
+
+    @check_input
+    def test(self, matrix):
+        return matrix
 
     @timer
     def gauss_elim(self, data: np.ndarray) -> np.ndarray:
@@ -153,9 +188,10 @@ class LinearAlgebra():
 
 testarray = np.array(
     [[1,1,2,9],[2,4,3,1],[3,6,5,0]],                 
-    dtype=np.float64
+    dtype=np.int64
 )
+
+testarray1 = 1
 print(f'this is the orginal array:\n{testarray}')
 
-array = LinearAlgebra().gauss_elim(testarray)
-print(array)
+array = LinearAlgebra().test(testarray)
