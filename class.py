@@ -24,6 +24,7 @@ def check_input(func):
         matrix = args[0]
         matrix1 = kwargs.get('matrix')
         def check(mat):
+            # check if matrix is a numpy array
             if not isinstance(mat, np.ndarray):
                 raise TypeError("Matrix must be a numpy array")
             else:
@@ -31,11 +32,11 @@ def check_input(func):
                 if mat.dtype != np.float64:
                     raise TypeError("Matrix must be of type float64")
                 else:
-                    # check if data is a 2darray
+                    # check if matrix is a 1darray or 2darray
                     if mat.ndim <= 2:
                         raise ValueError("Matrix must be a 1darray or 2darray")
                     else:
-                        # check if data is not an empty numpy array
+                        # check if matrix is not an empty numpy array
                         if mat.size == 0:
                             raise ValueError("Matrix must not be an empty numpy array")
 
