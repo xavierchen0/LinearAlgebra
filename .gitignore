@@ -3,3 +3,9 @@
 
 # ignore markdown files
 *.md
+
+# ignore __pycache__ directory
+__pycache__/*
+
+# ignore .pytest_cache directory
+.pytest_cache/*
