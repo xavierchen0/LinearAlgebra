@@ -1,6 +1,12 @@
 from decorators import timer, validate_matrix
 import numpy as np
 
+# TODO:
+# Add class.method to check if a matrix is row echelon form
+# add test cases for class.method
+# check gaus_elim for errors
+# add test cases for gaus_elim 
+
 class LinearAlgebra():
     """
     Initialise the LinearAlgebra class to perform linear algebra operations
@@ -9,6 +15,36 @@ class LinearAlgebra():
         pass
 
     def __repr__(self) -> str:
+        pass
+
+    @validate_matrix
+    def find_nonzero_index(matrix:np.ndarray) -> list:
+        '''
+        Finds the index of the first non-zero element in each row.
+        '''
+        rows_num = matrix.shape[0]
+        indices = []
+        # iterate through the row to find the index of the first non-zero element
+        if matrix.ndim == 1:
+            for i in range(matrix.size):
+                if matrix[i] != 0:
+                    indices.append(i)
+                    break
+            return indices
+        elif matrix.ndim == 2:
+            for row in range(rows_num):
+                for i in range(matrix[row].size):
+                    if matrix[row][i] != 0:
+                        indices.append(i)
+                        break
+            return indices
+    
+    @timer
+    @validate_matrix
+    def row_echelon(self, matrix:np.array) -> bool:
+        '''
+        Checks if a given matrix is in row echelon form.
+        '''
         pass
 
     @timer
@@ -136,12 +172,3 @@ class LinearAlgebra():
         data1 = np.append(completedrows, zerorows, 0)
         return data1
 
-testarray = np.array(
-    [[1,1,2,9],[2,4,3,1],[3,6,5,0]],                 
-    dtype=np.int64
-)
-
-testarray1 = 1
-print(f'this is the orginal array:\n{testarray}')
-
-array = LinearAlgebra().test(testarray)

@@ -1,6 +1,7 @@
 import pytest
 from decorators import validate_matrix
 import numpy as np
+import linalg_func as lg
 
 def test_validate_matrix_errors():
     '''
@@ -43,3 +44,19 @@ def test_validate_matrix_args():
 
     # test if function returns the matrix if matrix is given as a keyword argument
     assert test_func(matrix=np.ones((1,1), dtype=np.float64)) == np.ones((1,1), dtype=np.float64)
+
+def test_linalg_find_nonzero_index():
+    '''
+    Test if function returns the correct list of indices of the first non-zero element in each row.
+    '''
+    # test if function returns the correct list of indices of the first non-zero element in each row for a 1darray with only zeros
+    assert lg.LinearAlgebra.find_nonzero_index(np.zeros((1), dtype=np.float64)) == []
+
+    # test if function returns the correct list of indices of the first non-zero element in each row for a 2darray with only zeros
+    assert lg.LinearAlgebra.find_nonzero_index(np.zeros((5,5), dtype=np.float64)) == []
+
+    # test if function returns the correct list of indices of the first non-zero element in each row for 1darray
+    assert lg.LinearAlgebra.find_nonzero_index(np.array([0, 0, 1, 2, 3], dtype=np.float64)) == [2]
+
+    # test if function returns the correct list of indices of the first non-zero element in each row for 2darray
+    assert lg.LinearAlgebra.find_nonzero_index(np.array([[0, 0, 1, 2, 3], [0, 0, 0, 2, 3]], dtype=np.float64)) == [2, 3] 
