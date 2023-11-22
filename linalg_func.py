@@ -41,24 +41,42 @@ class LinearAlgebra():
         
     @validate_matrix
     def find_zero_rows(matrix:np.ndarray) -> list:
-            '''
-            Find indices of all rows consisting entirely of zeros in a matrix.
-            '''
-            # create an empty list to store the indices of the zero rows
-            zero_rows = []
+        '''
+        Find indices of all rows consisting entirely of zeros in a matrix.
+        '''
+        # create an empty list to store the indices of the zero rows
+        zero_rows = []
 
-            # iterate through the rows of the matrix to find the indices of the zero rows
-            if matrix.ndim == 1:
-                if np.all(matrix == 0):
-                    zero_rows.append(0)
-                else:
-                    return zero_rows
+        # iterate through the rows of the matrix to find the indices of the zero rows
+        if matrix.ndim == 1:
+            if np.all(matrix == 0):
+                zero_rows.append(0)
             else:
-                for i in range(matrix.shape[0]):
-                    if np.all(matrix[i] == 0):
-                        zero_rows.append(i)
+                return zero_rows
+        else:
+            for i in range(matrix.shape[0]):
+                if np.all(matrix[i] == 0):
+                    zero_rows.append(i)
 
-            return zero_rows
+        return zero_rows
+
+    def move_zerorows_bottom(matrix:np.ndarray) -> np.ndarray:
+        '''
+        Moves all zero rows to the bottom of the matrix.
+        '''
+        # find indices of all zero rows
+        zerorow_indices = LinearAlgebra.find_zero_rows(matrix)
+        
+        # check if matrix is a 1darray with only zeros
+        if (matrix.ndim == 1) and (zerorow_indices != []):
+            return matrix
+
+        # move all zero rows to the bottom of the matrix
+        zerorow_arr = matrix[zerorow_indices]
+        matrix = np.delete(matrix, obj=zerorow_indices, axis=0)
+        matrix = np.append(matrix, zerorow_arr, axis=0)
+        
+        return matrix
 
     @timer
     @validate_matrix

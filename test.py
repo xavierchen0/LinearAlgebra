@@ -71,11 +71,31 @@ def test_linalg_find_zero_rows():
     # test if function returns the correct list of indices of the zero rows for a 2darray with only zeros
     assert lg.LinearAlgebra.find_zero_rows(np.zeros((5,5), dtype=np.float64)) == [x for x in range(5)]
 
-    # test if function returns an empty list a 1darray with no zeros
+    # test if function returns an empty list for a 1darray with no zeros
     assert lg.LinearAlgebra.find_zero_rows(np.array([0, 0, 1, 2, 3], dtype=np.float64)) == []
 
-    # test if function returns the correct list of indices of the zero rows for a 2darray
+    # test if function returns the correct list of indices of the zero rows for a 2darray that do not contain zero rows
     assert lg.LinearAlgebra.find_zero_rows(np.array([[0, 0, 1, 2, 3], [0, 0, 0, 2, 3]], dtype=np.float64)) == []
 
-    # test if function returns the correct list of indices of the zero rows for a 2darray
+    # test if function returns the correct list of indices of the zero rows for a 2darray that cotains zero rows
     assert lg.LinearAlgebra.find_zero_rows(np.array([[0, 0, 1, 2, 3], [0, 0, 0, 0, 0], [0, 0, 0, 1, 0], [0, 0, 0, 0, 0]], dtype=np.float64)) == [1,3]
+
+def test_linalg_move_zerorows_bottom():
+    '''
+    Test if function moves all zero rows to the bottom of the matrix.
+    '''
+    # test if function returns the same matrix for a 1darray with only zeros
+    assert np.allclose(lg.LinearAlgebra.move_zerorows_bottom(np.zeros((5), dtype=np.float64)), np.zeros((5), dtype=np.float64), rtol=1e-05, atol=1e-08)
+
+    # test if function returns the same matrix for a 2darray with only zeros
+    assert np.allclose(lg.LinearAlgebra.move_zerorows_bottom(np.zeros((5), dtype=np.float64)), np.zeros((5,5), dtype=np.float64), rtol=1e-05, atol=1e-08)
+
+    # test if function returns the same matrix for a 1darray with no zeros
+    assert np.allclose(lg.LinearAlgebra.move_zerorows_bottom(np.array([0, 0, 1, 2, 3], dtype=np.float64)), np.array([0, 0, 1, 2, 3], dtype=np.float64), rtol=1e-05, atol=1e-08)
+
+    # test if function moves all zero rows to the bottom of the matrix for a 2darray
+    assert np.allclose(lg.LinearAlgebra.move_zerorows_bottom(np.array([[0, 0, 1, 2, 3], [0, 0, 0, 0, 0], [0, 0, 0, 1, 0], [0, 0, 0, 0, 0]], dtype=np.float64)), np.array([[0, 0, 1, 2, 3], [0, 0, 0, 1, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]], dtype=np.float64), rtol=1e-05, atol=1e-08)
+
+    # test if function returns the original matrix for a 2darray that do not contain zero rows
+    assert np.allclose(lg.LinearAlgebra.move_zerorows_bottom(np.array([[0, 0, 1, 2, 3], [0, 0, 0, 2, 3]], dtype=np.float64)), np.array([[0, 0, 1, 2, 3], [0, 0, 0, 2, 3]], dtype=np.float64), rtol=1e-05, atol=1e-08)
+
