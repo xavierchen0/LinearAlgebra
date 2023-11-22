@@ -38,14 +38,35 @@ class LinearAlgebra():
                         indices.append(i)
                         break
             return indices
-    
+        
+    @validate_matrix
+    def find_zero_rows(matrix:np.ndarray) -> list:
+            '''
+            Find indices of all rows consisting entirely of zeros in a matrix.
+            '''
+            # create an empty list to store the indices of the zero rows
+            zero_rows = []
+
+            # iterate through the rows of the matrix to find the indices of the zero rows
+            if matrix.ndim == 1:
+                if np.all(matrix == 0):
+                    zero_rows.append(0)
+                else:
+                    return zero_rows
+            else:
+                for i in range(matrix.shape[0]):
+                    if np.all(matrix[i] == 0):
+                        zero_rows.append(i)
+
+            return zero_rows
+
     @timer
     @validate_matrix
-    def row_echelon(self, matrix:np.array) -> bool:
+    def row_echelon(matrix:np.array) -> bool:
         '''
         Checks if a given matrix is in row echelon form.
         '''
-        pass
+        
 
     @timer
     def gauss_elim(self, data: np.ndarray) -> np.ndarray:

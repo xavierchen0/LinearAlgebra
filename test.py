@@ -59,4 +59,23 @@ def test_linalg_find_nonzero_index():
     assert lg.LinearAlgebra.find_nonzero_index(np.array([0, 0, 1, 2, 3], dtype=np.float64)) == [2]
 
     # test if function returns the correct list of indices of the first non-zero element in each row for 2darray
-    assert lg.LinearAlgebra.find_nonzero_index(np.array([[0, 0, 1, 2, 3], [0, 0, 0, 2, 3]], dtype=np.float64)) == [2, 3] 
+    assert lg.LinearAlgebra.find_nonzero_index(np.array([[0, 0, 1, 2, 3], [0, 0, 0, 2, 3]], dtype=np.float64)) == [2, 3]
+
+def test_linalg_find_zero_rows():
+    '''
+    Test if function returns the correct list of indices of the zero rows.
+    '''
+    # test if function returns the correct list of indices of the zero rows for a 1darray with only zeros
+    assert lg.LinearAlgebra.find_zero_rows(np.zeros((5), dtype=np.float64)) == [0]
+
+    # test if function returns the correct list of indices of the zero rows for a 2darray with only zeros
+    assert lg.LinearAlgebra.find_zero_rows(np.zeros((5,5), dtype=np.float64)) == [x for x in range(5)]
+
+    # test if function returns an empty list a 1darray with no zeros
+    assert lg.LinearAlgebra.find_zero_rows(np.array([0, 0, 1, 2, 3], dtype=np.float64)) == []
+
+    # test if function returns the correct list of indices of the zero rows for a 2darray
+    assert lg.LinearAlgebra.find_zero_rows(np.array([[0, 0, 1, 2, 3], [0, 0, 0, 2, 3]], dtype=np.float64)) == []
+
+    # test if function returns the correct list of indices of the zero rows for a 2darray
+    assert lg.LinearAlgebra.find_zero_rows(np.array([[0, 0, 1, 2, 3], [0, 0, 0, 0, 0], [0, 0, 0, 1, 0], [0, 0, 0, 0, 0]], dtype=np.float64)) == [1,3]
