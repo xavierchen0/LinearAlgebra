@@ -60,6 +60,7 @@ class LinearAlgebra():
 
         return zero_rows
 
+    @validate_matrix
     def move_zerorows_bottom(matrix:np.ndarray) -> np.ndarray:
         '''
         Moves all zero rows to the bottom of the matrix.
