@@ -33,10 +33,13 @@ class LinearAlgebra():
             return indices
         elif matrix.ndim == 2:
             for row in range(rows_num):
-                for i in range(matrix[row].size):
-                    if matrix[row][i] != 0:
-                        indices.append(i)
-                        break
+                if np.all(matrix[row] == 0):
+                    indices.append(np.nan)
+                else:
+                    for i in range(matrix[row].size):
+                        if (matrix[row][i] != 0):
+                            indices.append(i)
+                            break
             return indices
         
     @validate_matrix
@@ -79,13 +82,12 @@ class LinearAlgebra():
         
         return matrix
 
-    @timer
     @validate_matrix
-    def row_echelon(matrix:np.array) -> bool:
+    def is_row_echelon(matrix:np.array) -> bool:
         '''
         Checks if a given matrix is in row echelon form.
         '''
-        
+        pass
 
     @timer
     def gauss_elim(self, data: np.ndarray) -> np.ndarray:
