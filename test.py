@@ -53,7 +53,7 @@ def test_linalg_find_nonzero_index():
     assert lg.LinearAlgebra.find_nonzero_index(np.zeros((1), dtype=np.float64)) == []
 
     # test if function returns the correct list of indices of the first non-zero element in each row for a 2darray with only zeros
-    assert lg.LinearAlgebra.find_nonzero_index(np.zeros((5,5), dtype=np.float64)) == [np.nan] * 5
+    assert lg.LinearAlgebra.find_nonzero_index(np.zeros((5,5), dtype=np.float64)) == [-1] * 5
 
     # test if function returns the correct list of indices of the first non-zero element in each row for 1darray
     assert lg.LinearAlgebra.find_nonzero_index(np.array([0, 0, 1, 2, 3], dtype=np.float64)) == [2]
@@ -62,7 +62,7 @@ def test_linalg_find_nonzero_index():
     assert lg.LinearAlgebra.find_nonzero_index(np.array([[0, 0, 1, 2, 3], [0, 0, 0, 2, 3]], dtype=np.float64)) == [2, 3]
 
     # test if function returns the correct list of indices of the first non-zero element in each row for 2darray
-    assert lg.LinearAlgebra.find_nonzero_index(np.array([[0, 0, 1, 2, 3], [0, 0, 0, 0, 0],[0, 0, 0, 2, 3]], dtype=np.float64)) == [2, np.nan, 3]
+    assert lg.LinearAlgebra.find_nonzero_index(np.array([[0, 0, 1, 2, 3], [0, 0, 0, 0, 0],[0, 0, 0, 2, 3]], dtype=np.float64)) == [2, -1, 3]
 
 def test_linalg_find_zero_rows():
     '''
@@ -102,9 +102,24 @@ def test_linalg_move_zerorows_bottom():
     # test if function returns the original matrix for a 2darray that do not contain zero rows
     assert np.allclose(lg.LinearAlgebra.move_zerorows_bottom(np.array([[0, 0, 1, 2, 3], [0, 0, 0, 2, 3]], dtype=np.float64)), np.array([[0, 0, 1, 2, 3], [0, 0, 0, 2, 3]], dtype=np.float64), rtol=1e-05, atol=1e-08)
 
-# def test_linalg_is_row_echelon():
+def test_linalg_is_row_echelon():
     '''
     Test if function checks if a given matrix is in row echelon form.
     '''
     # test if function returns True for a 1darray with only zeros
-    # assert lg.LinearAlgebra.is_row_echelon(np.zeros((5), dtype=np.float64)) == True
+    assert lg.LinearAlgebra.is_row_echelon(np.zeros((5), dtype=np.float64)) == True
+
+     # test if function returns True for a 2darray with only zeros
+    assert lg.LinearAlgebra.is_row_echelon(np.zeros((5,5), dtype=np.float64)) == True
+
+    # test if function returns True for a 1darray that is in row echelon form
+    assert lg.LinearAlgebra.is_row_echelon(np.array([0, 0, 1, 2, 3], dtype=np.float64)) == True
+
+    # test if function returns True for a 2darray that is in row echelon form
+    assert lg.LinearAlgebra.is_row_echelon(np.array([[0, 0, 1, 2, 3], [0, 0, 0, 2, 3]], dtype=np.float64)) == True
+    
+    # test if function returns True for a 2darray that is in not row echelon form with zero rows in the middle
+    assert lg.LinearAlgebra.is_row_echelon(np.array([[0, 0, 1, 2, 3], [0, 0, 0, 0, 0],[0, 0, 0, 2, 3]], dtype=np.float64)) == False
+
+    # test if function returns True for a 2darray that is in not row echelon form
+    assert lg.LinearAlgebra.is_row_echelon(np.array([[0, 0, 1, 2, 3], [0, 1, 2, 3, 0],[0, 0, 0, 0, 3]], dtype=np.float64)) == False

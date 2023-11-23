@@ -34,7 +34,7 @@ class LinearAlgebra():
         elif matrix.ndim == 2:
             for row in range(rows_num):
                 if np.all(matrix[row] == 0):
-                    indices.append(np.nan)
+                    indices.append(-1)
                 else:
                     for i in range(matrix[row].size):
                         if (matrix[row][i] != 0):
@@ -87,7 +87,19 @@ class LinearAlgebra():
         '''
         Checks if a given matrix is in row echelon form.
         '''
-        pass
+        # Finds the index of the first non-zero element in each row.
+        indices = LinearAlgebra.find_nonzero_index(matrix)
+
+        # check if matrix of 2darray contains entirely of zeros
+        if all(i == -1 for i in indices):
+            return True
+
+        # check each element in the indices list to see if they are in ascending order        
+        for i in range(len(indices)-1):
+            if indices[i] >= indices[i+1]:
+                return False
+        
+        return True
 
     @timer
     def gauss_elim(self, data: np.ndarray) -> np.ndarray:
