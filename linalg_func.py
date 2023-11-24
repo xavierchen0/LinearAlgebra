@@ -17,7 +17,6 @@ class LinearAlgebra():
     def __repr__(self) -> str:
         pass
 
-    @validate_matrix
     def find_nonzero_index(matrix:np.ndarray) -> list:
         '''
         Finds the index of the first non-zero element in each row.
@@ -42,7 +41,6 @@ class LinearAlgebra():
                             break
             return indices
         
-    @validate_matrix
     def find_zero_rows(matrix:np.ndarray) -> list:
         '''
         Find indices of all rows consisting entirely of zeros in a matrix.
@@ -63,7 +61,6 @@ class LinearAlgebra():
 
         return zero_rows
 
-    @validate_matrix
     def move_zerorows_bottom(matrix:np.ndarray) -> np.ndarray:
         '''
         Moves all zero rows to the bottom of the matrix.
@@ -101,128 +98,82 @@ class LinearAlgebra():
         
         return True
 
-    @timer
-    def gauss_elim(self, data: np.ndarray) -> np.ndarray:
+    def is_zero_inrowofcol(matrix:np.ndarray, col:int) -> bool:
         '''
-        Inputs a numpy array (maximum 2darray) and performs Gaussian elimination on it.
+        Checks if the first row is a zero in a given column.
+        '''
+        if matrix[0, col] == 0:
+            return True
+        else:
+            return False
+
+    @timer
+    @validate_matrix
+    def gauss_elim(matrix:np.ndarray) -> np.ndarray: # answers might be different depending on how the matrix is arranged
+        '''
+        Inputs a matrix and performs Gaussian elimination on it.
 
         Returns a numpy array of the matrix in row echelon form.
-        '''
-        # check if data is a numpy array
-        if not isinstance(data, np.ndarray):
-            raise TypeError("Input data must be a numpy array")
-        
-        # check if data is a 2darray
-        if data.ndim != 2:
-            raise ValueError("Input data must be a 2darray")
-        
-        # check if data type of the numpy arrray is float64 or int64
-        if data.dtype != np.float64:
-            raise TypeError("Input data must be of type float64")
-        
-        # check if data is not an empty numpy array
-        if data.size == 0:
-            raise ValueError("Input data must not be an empty numpy array")
-
-        # function to find the index of the first non-zero element in a row
-        def find_first_nonzero_row(row:np.ndarray) -> int or np.nan:
-            '''
-            Finds the index of the first non-zero element in a row.
-            '''
-            # iterate through the row to find the index of the first non-zero element
-            for i in range(row.size):
-                if row[i] != 0:
-                    return i
-            return np.nan
-        
-        # function to find the index of the first non-zero element in a col
-        def find_first_zero_col(col:np.ndarray) -> int or False:
-            '''
-            Finds the index of the first non-zero element in a column.
-            '''
-            # iterate through the col to find the index of the first zero element starting from the top
-            for i in range(col.size):
-                if col[i] == 0:
-                    return i
-            return False
-                
-        # function to check if matrix is in row echelon form
-        def is_row_echelon_form(data:np.ndarray) -> bool:
-            '''
-            Check if the matrix is in row echelon form.
-            '''
-            # iterate through the rows of the matrix to check if the first non-zero element of the lower row 
-            # is to the right of the first non-zero element of the row above it
-            for i in range(data.shape[0] - 1):
-                upper_row = data[i]
-                lower_row = data[i+1]
-                i_upper = find_first_nonzero_row(upper_row) # i_upper is the index of the first non-zero element in the upper row
-                i_lower = find_first_nonzero_row(upper_row) # i_lower is the index of the first non-zero element in the lower row
-                if i_upper >= i_lower:
-                    return False
-            return True
-
-        # function to find the indices of zero rows
-        def find_zero_rows(data:np.ndarray) -> list:
-            '''
-            Find indices of all zero rows in a matrix.
-            '''
-            # create an empty list to store the indices of the zero rows
-            zero_rows = []
-
-            # iterate through the rows of the matrix to find the indices of the zero rows
-            for i in range(data.shape[0]):
-                if np.all(data[i] == 0):
-                    zero_rows.append(i)
-
-            return zero_rows 
-
-        # perform gaussian elimination
-        
-        while not is_row_echelon_form(data):
+        '''        
+        while True:
             # create an empty array to store the completed rows
-            completedrows = np.empty((0, data.shape[1]))
-        
+            completedrows = np.empty((0, matrix.shape[1]))
+            
             # create an empty array to store the zero rows
-            zerorows = np.empty((0, data.shape[1]))
+            zerorows = np.empty((0, matrix.shape[1]))
 
-            for col in range(data.shape[1]):
+            for col in range(matrix.shape[1]):
                 # store zero rows in the zerorows array
-                indices = find_zero_rows(data)
-                zerorows = np.append(zerorows, data[indices], 0)
+                indices = LinearAlgebra.find_zero_rows(matrix)
+                if len(indices) == 1:
+                    zerorows = np.append(zerorows, matrix[indices, np.newaxis], 0)
+                else:
+                    zerorows = np.append(zerorows, matrix[indices], 0)
 
                 # delete the zero rows from the matrix
-                data = np.delete(data, indices, 0)
+                matrix = np.delete(matrix, indices, 0)
+
                 # moving from the left-most to the right-most column, sort the rows from largest to smallest
-                indices = np.argsort(data[:, col])
-                data = data[indices[::-1]]
+                indices = np.argsort(matrix[:, col])
+                matrix = matrix[indices[::-1]]
+                
+                if np.all(matrix[:, col] == 0):
+                    continue
+                else:
+                    while True:
+
+                        if np.all(matrix[:, col] == 0):
+                            break
+
+                        # find index of the first zero element in the column
+                        zero_inrowofcol = LinearAlgebra.is_zero_inrowofcol(matrix, col)
+                       
+                        # move the row with zero in the column to the bottom
+                        if zero_inrowofcol == True:
+                            temp = matrix[0, np.newaxis]
+                            matrix = np.delete(matrix, 0, 0)
+                            matrix = np.append(matrix, temp, 0)
+                        else:
+                            break
+
                 # divide the first row by 1/a where a is the first non-zero element in the first row to get a leading 1
-                a = data[0, col]
-                data[0] = data[0] / a
+                a = matrix[0, col]
+                matrix[0] = matrix[0] / a
                 # temporary variable to store the first row
-                temp1 = data[0]
+                temp1 = matrix[0] 
 
                 # check if there are any zeros below the leading 1
-                first_zero_col = find_first_zero_col(data[:, col])
+                first_nonzero_col = LinearAlgebra.find_nonzero_index(matrix[1:, col])
 
-                if first_zero_col == 1: # there are only zeros below the leading 1
-                    continue
-                elif first_zero_col == False: # there are no zeros below the leading 1
-                    row_count = data[:, col].size - 1 # number of rows to perform operations on to get zeroes below the leading 1
+                if (0 in first_nonzero_col) or (not first_nonzero_col): # there is a nonzero element below the leading 1
+                    row_count = matrix[:, col].size - 1 # number of rows to perform operations on to get zeroes below the leading 1
                     for i in range(row_count):
                         row = i + 1 # find index of the row to perform operations on
-                        temp2 = - data[row,col] 
-                        data[row] = data[row] + temp1 * temp2 # add multiple of the first row to the row to get a zero below the leading 1 
-                    completedrows = np.append(completedrows, data[0, np.newaxis], 0) 
-                    data = np.delete(data, 0, 0)
-                else:
-                    row_count = first_zero_col # number of rows to perform operations on to get zeroes below the leading 1
-                    for i in range(row_count):
-                        row = i + 1 # find index of the row to perform operations on
-                        temp2 = - data[row,col] 
-                        data[row] = data[row] + temp1 * temp2 # add multiple of the first row to the row to get a zero below the leading 1 
-                    completedrows = np.append(completedrows, data[0, np.newaxis], 0) 
-                    data = np.delete(data, 0, 0)
-        data1 = np.append(completedrows, zerorows, 0)
-        return data1
-
+                        temp2 = - matrix[row, col] 
+                        matrix[row] = matrix[row] + temp1 * temp2 # add multiple of the first row to the row to get a zero below the leading 1 
+                    completedrows = np.append(completedrows, matrix[0, np.newaxis], 0) 
+                    matrix = np.delete(matrix, 0, 0)
+            matrix1 = np.append(completedrows, zerorows, 0)
+            if LinearAlgebra.is_row_echelon(matrix1):
+                break
+        return matrix1

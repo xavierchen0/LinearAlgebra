@@ -123,3 +123,32 @@ def test_linalg_is_row_echelon():
 
     # test if function returns True for a 2darray that is in not row echelon form
     assert lg.LinearAlgebra.is_row_echelon(np.array([[0, 0, 1, 2, 3], [0, 1, 2, 3, 0],[0, 0, 0, 0, 3]], dtype=np.float64)) == False
+
+def test_find_zero_in_col():
+    '''
+    Test if function finds the index of the first zero element in a given column.
+    '''
+    # test for a matrix with a zero in the first column
+    matrix1 = np.array([[0, 2, 3], [4, 5, 6], [7, 8, 9]], dtype=np.float64)
+    assert lg.LinearAlgebra.is_zero_inrowofcol(matrix1, 0) == True
+
+    # test for a atrix with a zero in the second column
+    matrix2 = np.array([[1, 0, 3], [4, 5, 6], [7, 8, 9]], dtype=np.float64)
+    assert lg.LinearAlgebra.is_zero_inrowofcol(matrix2, 1) == True
+
+    # test for a atrix with a zero in the first column
+    matrix3 = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]], dtype=np.float64)
+    assert lg.LinearAlgebra.is_zero_inrowofcol(matrix3, 0) == False
+
+    # test for a matrix with a zero in the last position of the third column
+    matrix4 = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 0]], dtype=np.float64)
+    assert lg.LinearAlgebra.is_zero_inrowofcol(matrix4, 2) == False
+
+    # # test for a matrix with all zeros
+    matrix5 = np.zeros((3, 3))
+    assert lg.LinearAlgebra.is_zero_inrowofcol(matrix5, 0) == True
+
+def test_gauss_elim():
+# Test Case 1:
+    matrix1 = np.array([[0, 0, -2, 0 , 7 , 12], [2, 4, -5, 6, -5, -1], [2, 4, -10, 6, 12, 28]], dtype=np.float64)
+    assert np.array_equal(lg.LinearAlgebra.gauss_elim(matrix1), np.array([[1, 2, -5, 3, 6, 14], [0, 0, 1, 0, -3.4, -5.8], [0, 0, 0, 0, 1, 2]]))
